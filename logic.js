@@ -19,16 +19,28 @@ $(document).ready(function(){
     var trainDestination = $("#trainDestination").val().trim();
     var firstTrain = $("#firstTrain").val().trim();
     var frequency = $("#trainFrequency").val().trim();
+
+
+    var converted = moment(firstTrain, "hh:mm").subtract("1, years");
+    var currTime = moment();
+    var timeDiff = currTime.diff(moment(converted), "minutes");
+    var remainder = timeDiff % frequency;
+    var timeTillTrain = frequency - remainder;
+    var nextTrain = moment().add(timeTillTrain, "minutes").format("hh:mm a");
     
+   
+   
     database.ref().push({
         name: trainName,
         destination: trainDestination,
         firstTrain: firstTrain,
-        frequency: frequency
+        frequency: frequency,
+        nextArrival: nextTrain,
+        minutesAway: timeTillTrain
     });
 
     return false;
-});
+  });
 
   //on change to db
   database.ref().on("child_added", function(snapshot){
@@ -42,6 +54,8 @@ $(document).ready(function(){
     var destination = item.destination
     var first = item.firstTrain
     var frequency = item.frequency
+    var next = item.nextArrival
+    var minutesTil = item.minutesAway
     
 
     var row = $("<tr>")
@@ -54,9 +68,15 @@ $(document).ready(function(){
       var frequencyTd = $("<td>")
         frequencyTd.text(frequency)
 
+      var nextArrivalTd = $("<td>")
+        nextArrivalTd.text(next)
+
+      var minutesAwayTd = $("<td>")
+        minutesAwayTd.text(minutesTil)
 
 
-    row.append(nameTd, destinationTd, frequencyTd)
+
+    row.append(nameTd, destinationTd, frequencyTd, nextArrivalTd, minutesAwayTd)
     $("#trainTable").append(row);
   })
 
