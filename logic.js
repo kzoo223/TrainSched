@@ -11,21 +11,56 @@ $(document).ready(function(){
 
     var database = firebase.database();
 
-$("#submit").on("click", function() {
+//onclick for submit
+  $("#submit").on("click", function() {
 
-  //variables
-  var trainName = $("#trainName").val().trim();
-  var trainDestination = $("#trainDestination").val().trim();
-  var firstTrain = $("#firstTrain").val().trim();
-  var frequency = $("#trainFrequency").val().trim();
-  
-  database.ref().push({
-      name: trainName,
-      destination: trainDestination,
-      firstTrain: firstTrain,
-      frequency: frequency
+    //variables
+    var trainName = $("#trainName").val().trim();
+    var trainDestination = $("#trainDestination").val().trim();
+    var firstTrain = $("#firstTrain").val().trim();
+    var frequency = $("#trainFrequency").val().trim();
+    
+    database.ref().push({
+        name: trainName,
+        destination: trainDestination,
+        firstTrain: firstTrain,
+        frequency: frequency
     });
 
-})  
+    return false;
+});
+
+  //on change to db
+  database.ref().on("child_added", function(snapshot){
+
+    var item = snapshot.val()
+
+    console.log(snapshot.val());
+
+
+    var name = item.name
+    var destination = item.destination
+    var first = item.firstTrain
+    var frequency = item.frequency
+    
+
+    var row = $("<tr>")
+      var nameTd = $("<td>")
+        nameTd.text(name)
+
+      var destinationTd = $("<td>")
+        destinationTd.text(destination)
+
+      var frequencyTd = $("<td>")
+        frequencyTd.text(frequency)
+
+
+
+    row.append(nameTd, destinationTd, frequencyTd)
+    $("#trainTable").append(row);
+  })
+
+
+  
 
 })
